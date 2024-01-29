@@ -1,7 +1,9 @@
 package com.samluiz.ordermgmt.common.exceptions.handler;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.samluiz.ordermgmt.common.exceptions.ResourceNotFoundException;
+import com.samluiz.ordermgmt.common.exceptions.PedidoException;
+import com.samluiz.ordermgmt.common.exceptions.ProdutoException;
+import com.samluiz.ordermgmt.common.exceptions.RecursoNaoEncontradoException;
 import com.samluiz.ordermgmt.common.models.StandardError;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -17,11 +19,43 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<StandardError> resourceNotFound(ResourceNotFoundException e,
+    @ExceptionHandler(RecursoNaoEncontradoException.class)
+    public ResponseEntity<StandardError> resourceNotFound(RecursoNaoEncontradoException e,
                                                           HttpServletRequest request) {
         String error = "Recurso não encontrado.";
         HttpStatus status = HttpStatus.NOT_FOUND;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(ProdutoException.class)
+    public ResponseEntity<StandardError> produtoException(ProdutoException e,
+                                                          HttpServletRequest request) {
+        String error = "Erro ao fazer operação com produto.";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(PedidoException.class)
+    public ResponseEntity<StandardError> pedidoException(PedidoException e,
+                                                         HttpServletRequest request) {
+        String error = "Erro ao fazer operação com pedido.";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err = new StandardError(
                 Instant.now(),
                 status.value(),

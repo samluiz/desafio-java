@@ -2,12 +2,15 @@ package com.samluiz.ordermgmt.produto.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.samluiz.ordermgmt.pedido.models.Pedido;
 import com.samluiz.ordermgmt.produto.enums.Categoria;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,6 +26,12 @@ public class Produto {
     private Double preco;
 
     private Categoria categoria;
+
+    @ManyToMany
+    @JoinTable(name = "tb_produto_pedido",
+            joinColumns = @JoinColumn(name = "produto_id"),
+            inverseJoinColumns = @JoinColumn(name = "pedido_id"))
+    private List<Pedido> pedidos = new ArrayList<>();
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

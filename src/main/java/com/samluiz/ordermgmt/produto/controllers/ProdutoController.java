@@ -15,9 +15,9 @@ import java.util.UUID;
 @RestController
 public class ProdutoController implements ProdutoSwagger {
     private final ProdutoService produtoService;
-    private final ControllerUtils utils;
+    private final ControllerUtils<Produto> utils;
 
-    public ProdutoController(ProdutoService produtoService, ControllerUtils utils) {
+    public ProdutoController(ProdutoService produtoService, ControllerUtils<Produto> utils) {
         this.produtoService = produtoService;
         this.utils = utils;
     }

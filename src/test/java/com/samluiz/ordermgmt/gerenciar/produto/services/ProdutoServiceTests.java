@@ -1,6 +1,5 @@
 package com.samluiz.ordermgmt.gerenciar.produto.services;
 
-import com.samluiz.ordermgmt.common.exceptions.ProdutoException;
 import com.samluiz.ordermgmt.common.exceptions.RecursoNaoEncontradoException;
 import com.samluiz.ordermgmt.gerenciar.produto.models.Produto;
 import com.samluiz.ordermgmt.gerenciar.produto.repositories.ProdutoRepository;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +16,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,7 +69,7 @@ class ProdutoServiceTests {
     void findAll_DataAccessException_ThrowsProdutoException() {
         when(produtoRepository.findAll(any(Pageable.class))).thenThrow(PermissionDeniedDataAccessException.class);
 
-        assertThrows(ProdutoException.class, () -> produtoService.findAll(mock(Pageable.class)));
+        assertThrows(PermissionDeniedDataAccessException.class, () -> produtoService.findAll(mock(Pageable.class)));
     }
 
     @Test
@@ -87,7 +86,7 @@ class ProdutoServiceTests {
     void create_DataAccessException_ThrowsProdutoException() {
         when(produtoRepository.save(any(Produto.class))).thenThrow(PermissionDeniedDataAccessException.class);
 
-        assertThrows(ProdutoException.class, () -> produtoService.create(mock(Produto.class)));
+        assertThrows(PermissionDeniedDataAccessException.class, () -> produtoService.create(mock(Produto.class)));
     }
 
     @Test
@@ -116,7 +115,7 @@ class ProdutoServiceTests {
         when(produtoRepository.findById(productId)).thenReturn(Optional.of(mock(Produto.class)));
         when(produtoRepository.save(any(Produto.class))).thenThrow(PermissionDeniedDataAccessException.class);
 
-        assertThrows(ProdutoException.class, () -> produtoService.update(mock(Produto.class), productId));
+        assertThrows(PermissionDeniedDataAccessException.class, () -> produtoService.update(mock(Produto.class), productId));
     }
 
     @Test
@@ -143,6 +142,6 @@ class ProdutoServiceTests {
         when(produtoRepository.findById(productId)).thenReturn(Optional.of(mock(Produto.class)));
         when(produtoRepository.save(any(Produto.class))).thenThrow(PermissionDeniedDataAccessException.class);
 
-        assertThrows(ProdutoException.class, () -> produtoService.delete(productId));
+        assertThrows(PermissionDeniedDataAccessException.class, () -> produtoService.delete(productId));
     }
 }

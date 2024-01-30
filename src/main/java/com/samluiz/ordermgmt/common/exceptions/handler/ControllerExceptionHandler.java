@@ -8,6 +8,7 @@ import com.samluiz.ordermgmt.common.exceptions.ProdutoException;
 import com.samluiz.ordermgmt.common.exceptions.RecursoNaoEncontradoException;
 import com.samluiz.ordermgmt.common.models.StandardError;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -45,7 +45,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<StandardError> produtoException(ProdutoException e,
                                                           HttpServletRequest request) {
         String error = "Erro ao fazer operação com produto.";
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err = new StandardError(
                 Instant.now(),
                 status.value(),
@@ -61,7 +61,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<StandardError> pedidoException(PedidoException e,
                                                          HttpServletRequest request) {
         String error = "Erro ao fazer operação com pedido.";
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err = new StandardError(
                 Instant.now(),
                 status.value(),
@@ -211,6 +211,22 @@ public class ControllerExceptionHandler {
                                                             HttpServletRequest request) {
         String error = "Erro de integridade de dados.";
         HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<StandardError> dataAccessError(DataAccessException e,
+                                                         HttpServletRequest request) {
+        String error = "Erro de acesso aos dados.";
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         StandardError err = new StandardError(
                 Instant.now(),
                 status.value(),

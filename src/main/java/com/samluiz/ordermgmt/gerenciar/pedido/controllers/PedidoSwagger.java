@@ -1,11 +1,10 @@
 package com.samluiz.ordermgmt.gerenciar.pedido.controllers;
 
-import com.samluiz.ordermgmt.gerenciar.pedido.dtos.CriarPedidoDTO;
+import com.samluiz.ordermgmt.gerenciar.pedido.dtos.CriarOuAdicionarPedidoDTO;
 import com.samluiz.ordermgmt.gerenciar.pedido.models.Pedido;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,5 +36,33 @@ public interface PedidoSwagger {
     @ApiResponse(responseCode = "400", description = "Pedido inválido")
     @PreAuthorize("hasRole('ROLE_EDITOR')")
     @PostMapping
-    ResponseEntity<Pedido> create(@RequestBody @Valid CriarPedidoDTO dto);
+    ResponseEntity<Pedido> create(@RequestBody @Valid CriarOuAdicionarPedidoDTO dto);
+
+    @Operation(summary = "Adiciona um item ao pedido")
+    @ApiResponse(responseCode = "200", description = "Item adicionado ao pedido")
+    @ApiResponse(responseCode = "400", description = "Item inválido")
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @PatchMapping("/{id}/item")
+    ResponseEntity<Pedido> addItem(@PathVariable UUID id, @RequestBody @Valid CriarOuAdicionarPedidoDTO dto);
+
+    @Operation(summary = "Remove um item do pedido")
+    @ApiResponse(responseCode = "200", description = "Item removido do pedido")
+    @ApiResponse(responseCode = "400", description = "Item inválido")
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @DeleteMapping("/{pedidoId}/item/{itemId}")
+    ResponseEntity<Pedido> removeItem(@PathVariable UUID pedidoId, @PathVariable UUID itemId);
+
+    @Operation(summary = "Aumenta a quantidade de um produto de um item de um pedido")
+    @ApiResponse(responseCode = "200", description = "Quantidade aumentada")
+    @ApiResponse(responseCode = "400", description = "Item inválido")
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @PatchMapping("/item/{itemId}/adicionar")
+    ResponseEntity<Pedido> adicionarQuantidade(@PathVariable UUID itemId, @RequestParam Integer quantidade);
+
+    @Operation(summary = "Diminui a quantidade de um produto de um item de um pedido")
+    @ApiResponse(responseCode = "200", description = "Quantidade diminuída")
+    @ApiResponse(responseCode = "400", description = "Item inválido")
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @PatchMapping("/item/{itemId}/diminuir")
+    ResponseEntity<Pedido> diminuirQuantidade(@PathVariable UUID itemId, @RequestParam Integer quantidade);
 }

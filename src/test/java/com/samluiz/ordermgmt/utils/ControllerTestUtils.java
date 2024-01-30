@@ -2,11 +2,11 @@ package com.samluiz.ordermgmt.utils;
 
 import com.samluiz.ordermgmt.auth.user.dtos.CreateUserDTO;
 import com.samluiz.ordermgmt.auth.user.enums.Role;
-import com.samluiz.ordermgmt.gerenciar.pedido.dtos.CriarPedidoDTO;
+import com.samluiz.ordermgmt.gerenciar.pedido.dtos.CriarOuAdicionarPedidoDTO;
+import com.samluiz.ordermgmt.gerenciar.pedido.dtos.ItemPedidoDTO;
 import com.samluiz.ordermgmt.gerenciar.produto.enums.Categoria;
 import com.samluiz.ordermgmt.gerenciar.produto.models.Produto;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,9 +20,12 @@ public class ControllerTestUtils {
         return produto;
     }
 
-    public static CriarPedidoDTO montarCriarPedidoDTO() {
-        CriarPedidoDTO dto = new CriarPedidoDTO();
-        dto.setProdutos(List.of(UUID.randomUUID()));
+    public static CriarOuAdicionarPedidoDTO montarCriarPedidoDTO() {
+        ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO();
+        itemPedidoDTO.setProduto(UUID.randomUUID());
+        itemPedidoDTO.setQuantidade(1);
+        CriarOuAdicionarPedidoDTO dto = new CriarOuAdicionarPedidoDTO();
+        dto.setItens(Set.of(itemPedidoDTO));
         return dto;
     }
 
@@ -32,5 +35,12 @@ public class ControllerTestUtils {
         dto.setPassword("admin");
         dto.setRoles(Set.of(Role.ROLE_ADMIN, Role.ROLE_EDITOR, Role.ROLE_VIEWER));
         return dto;
+    }
+
+    public static ItemPedidoDTO montarItemPedidoDTO() {
+        ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO();
+        itemPedidoDTO.setProduto(UUID.randomUUID());
+        itemPedidoDTO.setQuantidade(1);
+        return itemPedidoDTO;
     }
 }

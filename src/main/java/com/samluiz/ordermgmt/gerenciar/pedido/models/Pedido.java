@@ -2,14 +2,13 @@ package com.samluiz.ordermgmt.gerenciar.pedido.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.samluiz.ordermgmt.gerenciar.produto.models.Produto;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -20,11 +19,8 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToMany
-    @JoinTable(name = "tb_pedido_produto",
-            joinColumns = @JoinColumn(name = "pedido_id"),
-            inverseJoinColumns = @JoinColumn(name = "produto_id"))
-    private List<Produto> produtos = new ArrayList<>();
+    @OneToMany(mappedBy = "pedido")
+    private Set<ItemPedido> itens = new HashSet<>();
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -43,10 +39,6 @@ public class Pedido {
     public Pedido() {
     }
 
-    public Pedido(List<Produto> produtos) {
-        this.produtos = produtos;
-    }
-
     public UUID getId() {
         return id;
     }
@@ -55,8 +47,12 @@ public class Pedido {
         this.id = id;
     }
 
-    public List<Produto> getProdutos() {
-        return produtos;
+    public Set<ItemPedido> getItens() {
+        return itens;
+    }
+
+    public void setItens(Set<ItemPedido> itens) {
+        this.itens = itens;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -67,24 +63,25 @@ public class Pedido {
         return updatedAt;
     }
 
-    public void addProduto(Produto produto) {
-        this.produtos.add(produto);
-        produto.addPedido(this);
+    public void addItem(ItemPedido item) {
+        this.itens.add(item);
+        item.setPedido(this);
     }
 
-    public void removeProduto(Produto produto) {
-        this.produtos.remove(produto);
+    public void removeItem(ItemPedido item) {
+        this.itens.remove(item);
+        item.setPedido(null);
     }
 
     public Double getTotal() {
-        return produtos.stream().mapToDouble(Produto::getPreco).sum();
+        return itens.stream().map(ItemPedido::getSubTotal).reduce(0.0, Double::sum);
     }
 
     @Override
     public String toString() {
         return "Pedido{" +
                 "id=" + id +
-                ", produtos=" + produtos +
+                ", itens=" + itens +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

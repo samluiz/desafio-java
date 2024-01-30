@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samluiz.ordermgmt.common.exceptions.PedidoException;
 import com.samluiz.ordermgmt.common.exceptions.RecursoNaoEncontradoException;
 import com.samluiz.ordermgmt.common.utils.ControllerUtils;
-import com.samluiz.ordermgmt.gerenciar.pedido.dtos.CriarPedidoDTO;
+import com.samluiz.ordermgmt.gerenciar.pedido.dtos.CriarOuAdicionarPedidoDTO;
 import com.samluiz.ordermgmt.gerenciar.pedido.models.Pedido;
 import com.samluiz.ordermgmt.gerenciar.pedido.services.PedidoService;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,8 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static com.samluiz.ordermgmt.utils.ControllerTestUtils.montarCriarPedidoDTO;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -55,7 +56,7 @@ class PedidoControllerTests {
         UUID existingPedidoId = UUID.randomUUID();
         Pedido existingPedido = new Pedido();
         existingPedido.setId(existingPedidoId);
-        when(pedidoService.findById(existingPedidoId)).thenReturn(existingPedido);
+        when(pedidoService.buscarPedidoPorId(existingPedidoId)).thenReturn(existingPedido);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/pedidos/{id}", existingPedidoId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -67,7 +68,7 @@ class PedidoControllerTests {
     @Test
     void findAll_ReturnsPageOfPedidos() throws Exception {
         Page<Pedido> mockPage = Page.empty();
-        when(pedidoService.findAll(any(PageRequest.class))).thenReturn(mockPage);
+        when(pedidoService.buscarTodos(any(PageRequest.class))).thenReturn(mockPage);
         when(controllerUtils.generateResponse(mockPage)).thenReturn(Collections.singletonMap("content", Collections.emptyList()));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/pedidos")
@@ -83,7 +84,7 @@ class PedidoControllerTests {
     void create_ValidPedido_ReturnsCreatedPedido() throws Exception {
         Pedido pedidoToCreate = new Pedido();
         Pedido createdPedido = new Pedido();
-        when(pedidoService.create(any(CriarPedidoDTO.class))).thenReturn(createdPedido);
+        when(pedidoService.criarPedido(any(CriarOuAdicionarPedidoDTO.class))).thenReturn(createdPedido);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/pedidos")
                         .content(objectMapper.writeValueAsString(pedidoToCreate))
@@ -95,7 +96,7 @@ class PedidoControllerTests {
     @Test
     void findById_NonExistingId_ReturnsNotFound() throws Exception {
         UUID nonExistingPedidoId = UUID.randomUUID();
-        when(pedidoService.findById(nonExistingPedidoId)).thenThrow(RecursoNaoEncontradoException.class);
+        when(pedidoService.buscarPedidoPorId(nonExistingPedidoId)).thenThrow(RecursoNaoEncontradoException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/pedidos/{id}", nonExistingPedidoId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -105,7 +106,7 @@ class PedidoControllerTests {
 
     @Test
     void findAll_DataAccessException_ReturnsInternalServerError() throws Exception {
-        when(pedidoService.findAll(any(PageRequest.class))).thenThrow(PermissionDeniedDataAccessException.class);
+        when(pedidoService.buscarTodos(any(PageRequest.class))).thenThrow(PermissionDeniedDataAccessException.class);
 
         try {
             mockMvc.perform(MockMvcRequestBuilders.get("/pedidos")
@@ -119,12 +120,175 @@ class PedidoControllerTests {
 
     @Test
     void create_DataAccessException_ReturnsInternalServerError() throws Exception {
-        doThrow(PedidoException.class).when(pedidoService).create(any(CriarPedidoDTO.class));
+        doThrow(PermissionDeniedDataAccessException.class).when(pedidoService).criarPedido(any(CriarOuAdicionarPedidoDTO.class));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/pedidos")
                         .content(objectMapper.writeValueAsString(montarCriarPedidoDTO()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError())
+                .andDo(print());
+    }
+
+    @Test
+    void addItem_ValidPedido_ReturnsOk() throws Exception {
+        UUID existingPedidoId = UUID.randomUUID();
+        Pedido existingPedido = new Pedido();
+        existingPedido.setId(existingPedidoId);
+        when(pedidoService.adicionarNovoItem(any(UUID.class), any(CriarOuAdicionarPedidoDTO.class))).thenReturn(existingPedido);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/pedidos/{id}/item", existingPedidoId)
+                        .content(objectMapper.writeValueAsString(montarCriarPedidoDTO()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void addItem_NonExistingPedido_ReturnsNotFound() throws Exception {
+        UUID nonExistingPedidoId = UUID.randomUUID();
+        when(pedidoService.adicionarNovoItem(any(UUID.class), any(CriarOuAdicionarPedidoDTO.class))).thenThrow(RecursoNaoEncontradoException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/pedidos/{id}/item", nonExistingPedidoId)
+                        .content(objectMapper.writeValueAsString(montarCriarPedidoDTO()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    void addItem_DataAccessException_ReturnsInternalServerError() throws Exception {
+        UUID existingPedidoId = UUID.randomUUID();
+        when(pedidoService.adicionarNovoItem(any(UUID.class), any(CriarOuAdicionarPedidoDTO.class))).thenThrow(PermissionDeniedDataAccessException.class);
+
+        try {
+            mockMvc.perform(MockMvcRequestBuilders.patch("/pedidos/{id}/item", existingPedidoId)
+                            .content(objectMapper.writeValueAsString(montarCriarPedidoDTO()))
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isInternalServerError())
+                    .andDo(print());
+        } catch (Exception ignored) {}
+    }
+
+    @Test
+    void removeItem_ValidPedido_ReturnsOk() throws Exception {
+        UUID existingPedidoId = UUID.randomUUID();
+        UUID existingItemPedidoId = UUID.randomUUID();
+        Pedido existingPedido = new Pedido();
+        existingPedido.setId(existingPedidoId);
+        when(pedidoService.removerItem(any(UUID.class), any(UUID.class))).thenReturn(existingPedido);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/pedidos/{pedidoId}/item/{itemId}", existingPedidoId, existingItemPedidoId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void removeItem_NonExistingPedido_ReturnsNotFound() throws Exception {
+        UUID nonExistingPedidoId = UUID.randomUUID();
+        UUID existingItemPedidoId = UUID.randomUUID();
+        when(pedidoService.removerItem(any(UUID.class), any(UUID.class))).thenThrow(RecursoNaoEncontradoException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/pedidos/{pedidoId}/item/{itemId}", nonExistingPedidoId, existingItemPedidoId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    void removeItem_DataAccessException_ReturnsInternalServerError() throws Exception {
+        UUID existingPedidoId = UUID.randomUUID();
+        UUID existingItemPedidoId = UUID.randomUUID();
+        when(pedidoService.removerItem(any(UUID.class), any(UUID.class))).thenThrow(PermissionDeniedDataAccessException.class);
+
+        try {
+            mockMvc.perform(MockMvcRequestBuilders.delete("/pedidos/{id}/item/{itemId}", existingPedidoId, existingItemPedidoId)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isInternalServerError())
+                    .andDo(print());
+        } catch (Exception ignored) {}
+    }
+
+    @Test
+    void aumentarQuantidade_ValidPedido_ReturnsOk() throws Exception {
+        UUID existingItemPedidoId = UUID.randomUUID();
+        Integer quantidade = 1;
+        Pedido existingPedido = new Pedido();
+        existingPedido.setId(UUID.randomUUID());
+        when(pedidoService.aumentarQuantidadeProdutoItem(any(UUID.class), anyInt())).thenReturn(existingPedido);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/pedidos/item/{itemId}/adicionar", existingItemPedidoId)
+                        .queryParam("quantidade", quantidade.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void aumentarQuantidade_NonExistingPedido_ReturnsNotFound() throws Exception {
+        UUID nonExistingItemPedidoId = UUID.randomUUID();
+        Integer quantidade = 1;
+        when(pedidoService.aumentarQuantidadeProdutoItem(any(UUID.class), anyInt())).thenThrow(RecursoNaoEncontradoException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/pedidos/item/{itemId}", nonExistingItemPedidoId, quantidade)
+                        .queryParam("quantidade", quantidade.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    void aumentarQuantidade_QuantidadeInvalida_ReturnsBadRequest() throws Exception {
+        UUID existingItemPedidoId = UUID.randomUUID();
+        Integer quantidade = 0;
+        when(pedidoService.aumentarQuantidadeProdutoItem(any(UUID.class), anyInt())).thenThrow(PedidoException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/pedidos/item/{itemId}/adicionar", existingItemPedidoId)
+                        .queryParam("quantidade", quantidade.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(print());
+    }
+
+
+    @Test
+    void diminuirQuantidade_ValidPedido_ReturnsOk() throws Exception {
+        UUID existingItemPedidoId = UUID.randomUUID();
+        Integer quantidade = 1;
+        Pedido existingPedido = new Pedido();
+        existingPedido.setId(UUID.randomUUID());
+        when(pedidoService.diminuirQuantidadeProdutoItem(any(UUID.class), anyInt())).thenReturn(existingPedido);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/pedidos/item/{itemId}/diminuir", existingItemPedidoId, quantidade)
+                        .queryParam("quantidade", quantidade.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void diminuirQuantidade_NonExistingPedido_ReturnsNotFound() throws Exception {
+        UUID nonExistingItemPedidoId = UUID.randomUUID();
+        Integer quantidade = 1;
+        when(pedidoService.diminuirQuantidadeProdutoItem(any(UUID.class), anyInt())).thenThrow(RecursoNaoEncontradoException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/pedidos/item/{itemId}/diminuir", nonExistingItemPedidoId, quantidade)
+                        .queryParam("quantidade", quantidade.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    void diminuirQuantidade_QuantidadeInvalida_ReturnsBadRequest() throws Exception {
+        UUID existingItemPedidoId = UUID.randomUUID();
+        Integer quantidade = 0;
+        when(pedidoService.diminuirQuantidadeProdutoItem(any(UUID.class), anyInt())).thenThrow(PedidoException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/pedidos/item/{itemId}/diminuir", existingItemPedidoId, quantidade)
+                        .queryParam("quantidade", quantidade.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andDo(print());
     }
 

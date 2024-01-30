@@ -92,18 +92,32 @@ public class PedidoService {
         }
     }
 
-    private Pedido adicionarItem(CriarOuAdicionarPedidoDTO dto, Pedido pedido) {
-        ItemPedido item = new ItemPedido();
+    Pedido adicionarItem(CriarOuAdicionarPedidoDTO dto, Pedido pedido) {
         dto.getItens().forEach(i -> {
             Optional<Produto> produto = produtoRepository.findById(i.getProduto());
             if (produto.isEmpty()) {
                 logger.info("Produto com id {} não encontrado.", i.getProduto());
             } else {
                 Produto produtoAtual = produto.get();
-                item.setProduto(produtoAtual);
-                item.setQuantidade(i.getQuantidade());
-                item.setPedido(pedido);
-                pedido.addItem(itemPedidoService.salvarItem(item));
+
+                // Checando se o produto já existe em algum item no pedido
+                Optional<ItemPedido> itemExistenteOptional = pedido.getItens().stream()
+                        .filter(item -> item.getProduto().getId().equals(produtoAtual.getId()))
+                        .findFirst();
+
+                if (itemExistenteOptional.isPresent()) {
+                    // Se sim, soma a quantidade do item
+                    ItemPedido itemExistente = itemExistenteOptional.get();
+                    itemExistente.setQuantidade(itemExistente.getQuantidade() + i.getQuantidade());
+                    itemPedidoService.salvarItem(itemExistente);
+                } else {
+                    // Se não, cria um novo item
+                    ItemPedido item = new ItemPedido();
+                    item.setProduto(produtoAtual);
+                    item.setQuantidade(i.getQuantidade());
+                    item.setPedido(pedido);
+                    pedido.addItem(itemPedidoService.salvarItem(item));
+                }
             }
         });
         return pedidoRepository.save(pedido);

@@ -1,0 +1,53 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:DEV}
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    open-in-view: true
+    defer-datasource-initialization: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    serialization:
+      fail-on-empty-beans: false
+
+server:
+  servlet:
+    context-path: /api
+  port: 8080
+
+auth:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
+  allowed-origins: ${ALLOWED_ORIGINS}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /docs
+    operationsSorter: alpha
+    displayRequestDuration: true
+    deepLinking: true
+    tags-sorter: alpha
+
+admin:
+  credentials:
+    username: ${ADMIN_USERNAME}
+    password: ${ADMIN_PASSWORD}

@@ -22,6 +22,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.samluiz.ordermgmt.utils.ControllerTestUtils.montarProduto;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -186,5 +188,52 @@ class PedidoServiceTests {
 
         assertNotNull(result);
         assertEquals(updatedPedido, result);
+    }
+
+    @Test
+    void testAdicionarItem_WhenSameProdutoInPedido_ThenSumQuantities() {
+        UUID produtoId = UUID.randomUUID();
+        UUID produtoId2 = UUID.randomUUID();
+        ItemPedidoDTO itemPedidoDTO1 = new ItemPedidoDTO();
+        itemPedidoDTO1.setProduto(produtoId);
+        itemPedidoDTO1.setQuantidade(2);
+
+        ItemPedidoDTO itemPedidoDTO2 = new ItemPedidoDTO();
+        itemPedidoDTO2.setProduto(produtoId2);
+        itemPedidoDTO2.setQuantidade(3);
+
+        CriarOuAdicionarPedidoDTO dto = new CriarOuAdicionarPedidoDTO();
+        dto.setItens(Set.of(itemPedidoDTO1, itemPedidoDTO2));
+
+        Produto produto = montarProduto();
+        produto.setId(produtoId);
+
+        Produto produto2 = montarProduto();
+        produto2.setId(produtoId2);
+
+        ItemPedido existingItem = new ItemPedido();
+        existingItem.setId(UUID.randomUUID());
+        existingItem.setProduto(produto);
+        existingItem.setQuantidade(5);
+
+        Pedido pedido = new Pedido();
+        pedido.addItem(existingItem);
+
+        when(produtoRepository.findById(produtoId)).thenReturn(Optional.of(produto));
+        when(produtoRepository.findById(produtoId2)).thenReturn(Optional.of(produto2));
+        when(pedidoRepository.save(any())).thenReturn(pedido);
+        when(itemPedidoService.salvarItem(any())).thenReturn(existingItem);
+
+        Pedido result = pedidoService.adicionarItem(dto, pedido);
+
+        assertThat(result.getItens()).hasSize(1);
+
+        ItemPedido updatedItem = result.getItens().stream()
+                .filter(i -> i.getProduto().getId().equals(produtoId))
+                .findFirst()
+                .orElse(null);
+
+        assertThat(updatedItem).isNotNull();
+        assertThat(updatedItem.getQuantidade()).isEqualTo(5 + itemPedidoDTO1.getQuantidade());
     }
 }

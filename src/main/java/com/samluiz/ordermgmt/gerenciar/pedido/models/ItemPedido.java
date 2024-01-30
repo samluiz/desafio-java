@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.samluiz.ordermgmt.gerenciar.produto.models.Produto;
 import jakarta.persistence.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -76,5 +77,18 @@ public class ItemPedido {
 
     public Double getSubTotal() {
         return this.quantidade * this.produto.getPreco();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemPedido that = (ItemPedido) o;
+        return Objects.equals(id, that.id) && Objects.equals(produto, that.produto);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, produto);
     }
 }

@@ -29,7 +29,7 @@ public class ProdutoService {
             return produtoRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException(id));
         } catch (DataAccessException e) {
             logger.error("Erro ao buscar produto com id {} -> Erro: {}", id, e.getMessage());
-            throw new ProdutoException("Erro ao buscar produto com id " + id);
+            throw e;
         }
     }
 
@@ -38,7 +38,7 @@ public class ProdutoService {
             return produtoRepository.findAll(pageable);
         } catch (DataAccessException e) {
             logger.error("Erro ao buscar produtos -> Erro: {}", e.getMessage());
-            throw new ProdutoException("Erro ao buscar produtos.");
+            throw e;
         }
     }
 
@@ -47,7 +47,7 @@ public class ProdutoService {
             return produtoRepository.save(obj);
         } catch (DataAccessException e) {
             logger.error("Erro ao criar produto -> Erro: {}", e.getMessage());
-            throw new ProdutoException("Erro ao criar produto.");
+            throw e;
         }
     }
 
@@ -60,7 +60,7 @@ public class ProdutoService {
             return produtoRepository.save(entity);
         } catch (DataAccessException e) {
             logger.error("Erro ao atualizar produto -> Erro: {}", e.getMessage());
-            throw new ProdutoException("Erro ao atualizar produto.");
+            throw e;
         }
     }
 
@@ -72,7 +72,7 @@ public class ProdutoService {
             produtoRepository.save(produto);
         } catch (DataAccessException e) {
             logger.error("Erro ao deletar produto -> Erro: {}", e.getMessage());
-            throw new ProdutoException("Erro ao deletar produto.");
+            throw e;
         }
     }
 }

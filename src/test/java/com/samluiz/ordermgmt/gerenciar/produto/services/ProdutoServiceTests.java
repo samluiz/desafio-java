@@ -70,7 +70,7 @@ class ProdutoServiceTests {
     void findAll_DataAccessException_ThrowsProdutoException() {
         when(produtoRepository.findAll(any(Pageable.class))).thenThrow(PermissionDeniedDataAccessException.class);
 
-        assertThrows(ProdutoException.class, () -> produtoService.findAll(mock(Pageable.class)));
+        assertThrows(PermissionDeniedDataAccessException.class, () -> produtoService.findAll(mock(Pageable.class)));
     }
 
     @Test
@@ -87,7 +87,7 @@ class ProdutoServiceTests {
     void create_DataAccessException_ThrowsProdutoException() {
         when(produtoRepository.save(any(Produto.class))).thenThrow(PermissionDeniedDataAccessException.class);
 
-        assertThrows(ProdutoException.class, () -> produtoService.create(mock(Produto.class)));
+        assertThrows(PermissionDeniedDataAccessException.class, () -> produtoService.create(mock(Produto.class)));
     }
 
     @Test
@@ -116,7 +116,7 @@ class ProdutoServiceTests {
         when(produtoRepository.findById(productId)).thenReturn(Optional.of(mock(Produto.class)));
         when(produtoRepository.save(any(Produto.class))).thenThrow(PermissionDeniedDataAccessException.class);
 
-        assertThrows(ProdutoException.class, () -> produtoService.update(mock(Produto.class), productId));
+        assertThrows(PermissionDeniedDataAccessException.class, () -> produtoService.update(mock(Produto.class), productId));
     }
 
     @Test
@@ -143,6 +143,6 @@ class ProdutoServiceTests {
         when(produtoRepository.findById(productId)).thenReturn(Optional.of(mock(Produto.class)));
         when(produtoRepository.save(any(Produto.class))).thenThrow(PermissionDeniedDataAccessException.class);
 
-        assertThrows(ProdutoException.class, () -> produtoService.delete(productId));
+        assertThrows(PermissionDeniedDataAccessException.class, () -> produtoService.delete(productId));
     }
 }

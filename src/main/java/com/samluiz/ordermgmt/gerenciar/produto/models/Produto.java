@@ -3,6 +3,7 @@ package com.samluiz.ordermgmt.gerenciar.produto.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.samluiz.ordermgmt.gerenciar.pedido.models.ItemPedido;
 import com.samluiz.ordermgmt.gerenciar.pedido.models.Pedido;
 import com.samluiz.ordermgmt.gerenciar.produto.enums.Categoria;
 import jakarta.persistence.*;
@@ -37,8 +38,8 @@ public class Produto {
     private Categoria categoria;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "produtos")
-    private List<Pedido> pedidos = new ArrayList<>();
+    @OneToMany(mappedBy = "produto")
+    private List<ItemPedido> itens = new ArrayList<>();
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -103,16 +104,14 @@ public class Produto {
         return updatedAt;
     }
 
-    public List<Pedido> getPedidos() {
-        return pedidos;
+    public void addItem(ItemPedido item) {
+        this.itens.add(item);
+        item.setProduto(this);
     }
 
-    public void addPedido(Pedido pedido) {
-        this.pedidos.add(pedido);
-    }
-
-    public void removePedido(Pedido pedido) {
-        this.pedidos.remove(pedido);
+    public void removeItem(ItemPedido item) {
+        this.itens.remove(item);
+        item.setProduto(null);
     }
 
     @Override
@@ -122,7 +121,7 @@ public class Produto {
                 ", nome='" + nome + '\'' +
                 ", preco=" + preco +
                 ", categoria=" + categoria +
-                ", pedidos=" + pedidos +
+                ", itens=" + itens +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

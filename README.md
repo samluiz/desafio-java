@@ -24,7 +24,7 @@ API que gerencia os pedidos de um restaurante.
 Clone o projeto
 
 ```bash
-  git clone https://github.com/samluiz/desafio-java
+  git clone https://github.com/samluiz/desafio-java/tree/main
 ```
 
 Entre no diretório do projeto

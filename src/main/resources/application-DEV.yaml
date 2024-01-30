@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/postgres?serverTimezone=UTC&useSSL=false&autoReconnect=true&allowPublicKeyRetrieval=true
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+auth:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY:LrzK5x2nWXq0C/vyo0jdEEOo9e8rbC/iLegkVTDanWU=}
+  allowed-origins: ${ALLOWED_ORIGINS:*}
+
+admin:
+  credentials:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:admin}
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet:
+            DispatcherServlet: trace
+        security: error
+        FilterChainProxy: trace
+    hibernate: error
+    flyway: error

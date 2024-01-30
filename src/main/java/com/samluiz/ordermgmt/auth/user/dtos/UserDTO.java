@@ -36,4 +36,13 @@ public class UserDTO {
     public static UserDTO fromEntity(User user) {
         return new UserDTO(user.getId(), user.getUsername(), user.getRoles());
     }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
 }

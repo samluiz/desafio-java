@@ -66,7 +66,10 @@ public class ProdutoService {
 
     public void delete(UUID id) {
         try {
-            produtoRepository.delete(findById(id));
+            Produto produto = findById(id);
+            produto.setNome("Deletado");
+            produto.setPreco(0.00);
+            produtoRepository.save(produto);
         } catch (DataAccessException e) {
             logger.error("Erro ao deletar produto -> Erro: {}", e.getMessage());
             throw new ProdutoException("Erro ao deletar produto.");

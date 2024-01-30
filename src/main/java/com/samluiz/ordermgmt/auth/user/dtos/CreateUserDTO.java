@@ -2,14 +2,21 @@ package com.samluiz.ordermgmt.auth.user.dtos;
 
 import com.samluiz.ordermgmt.auth.user.enums.Role;
 import com.samluiz.ordermgmt.auth.user.models.User;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Set;
 
 public class CreateUserDTO {
 
+    @NotEmpty(message = "O username é obrigatório.")
     private String username;
+
+    @NotEmpty(message = "A senha é obrigatória.")
     private String password;
+
+    @NotNull(message = "O campo 'roles' não pode ser nulo.")
     private Set<Role> roles;
 
     public CreateUserDTO() {

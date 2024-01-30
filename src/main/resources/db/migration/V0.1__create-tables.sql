@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS tb_pedido (
                            updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS tb_produto_pedido (
-                                   produto_id UUID REFERENCES tb_produto(id),
+CREATE TABLE IF NOT EXISTS tb_pedido_produto (
                                    pedido_id UUID REFERENCES tb_pedido(id),
+                                   produto_id UUID REFERENCES tb_produto(id),
                                    PRIMARY KEY (produto_id, pedido_id)
 );

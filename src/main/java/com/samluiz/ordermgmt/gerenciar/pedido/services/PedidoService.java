@@ -56,7 +56,8 @@ public class PedidoService {
                 if (produto.isEmpty()) {
                     logger.info("Produto com id {} não encontrado.", produtoId);
                 } else {
-                    pedido.addProduto(produto.get());
+                    Produto produtoAtual = produto.get();
+                    pedido.addProduto(produtoAtual);
                 }
             }
             return pedidoRepository.save(pedido);

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public interface AuthSwagger {
     @ApiResponse(responseCode = "200", description = "Usuário autenticado", content = { @Content(schema = @Schema(implementation = AuthResponseDTO.class), mediaType = "application/json") })
     @ApiResponse(responseCode = "400", description = "Usuário inválido")
     @ApiResponse(responseCode = "401", description = "Usuário não autorizado")
+    @PermitAll
     @PostMapping("/login")
     ResponseEntity<AuthResponseDTO> login(@RequestBody AuthDTO dto);
 
@@ -30,6 +32,7 @@ public interface AuthSwagger {
     @ApiResponse(responseCode = "200", description = "Token atualizado", content = { @Content(schema = @Schema(implementation = AuthResponseDTO.class), mediaType = "application/json") })
     @ApiResponse(responseCode = "400", description = "Token inválido")
     @ApiResponse(responseCode = "401", description = "Token não autorizado")
+    @PermitAll
     @PostMapping("/refresh")
     ResponseEntity<AuthResponseDTO> refresh(@RequestBody AuthRefreshDTO dto, HttpServletRequest request, HttpServletResponse response);
 

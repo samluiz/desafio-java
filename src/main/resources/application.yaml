@@ -47,6 +47,16 @@ springdoc:
     deepLinking: true
     tags-sorter: alpha
 
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet: debug
+        security: debug
+    hibernate: error
+    flyway: info
+
 admin:
   credentials:
     username: ${ADMIN_USERNAME}

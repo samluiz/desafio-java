@@ -1,6 +1,7 @@
 package com.samluiz.ordermgmt.gerenciar.produto.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.samluiz.ordermgmt.gerenciar.pedido.models.Pedido;
 import com.samluiz.ordermgmt.gerenciar.produto.enums.Categoria;
@@ -31,14 +32,12 @@ public class Produto {
     @DecimalMin(value = "0.0", inclusive = true, message = "O valor de 'preco' deve ser um número decimal maior ou igual a 0.0.")
     private Double preco;
 
-    @NotEmpty(message = "O campo 'categoria' não pode ser vazio.")
+    @NotNull(message = "O campo 'categoria' não pode ser nulo.")
     @Enumerated(EnumType.STRING)
     private Categoria categoria;
 
-    @ManyToMany
-    @JoinTable(name = "tb_produto_pedido",
-            joinColumns = @JoinColumn(name = "produto_id"),
-            inverseJoinColumns = @JoinColumn(name = "pedido_id"))
+    @JsonIgnore
+    @ManyToMany(mappedBy = "produtos")
     private List<Pedido> pedidos = new ArrayList<>();
 
     @CreationTimestamp
@@ -98,5 +97,30 @@ public class Produto {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void addPedido(Pedido pedido) {
+        this.pedidos.add(pedido);
+    }
+
+    public void removePedido(Pedido pedido) {
+        this.pedidos.remove(pedido);
+    }
+
+    @Override
+    public String toString() {
+        return "Produto{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", preco=" + preco +
+                ", categoria=" + categoria +
+                ", pedidos=" + pedidos +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

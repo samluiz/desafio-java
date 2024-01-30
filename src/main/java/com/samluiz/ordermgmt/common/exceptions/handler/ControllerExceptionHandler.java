@@ -8,14 +8,18 @@ import com.samluiz.ordermgmt.common.exceptions.ProdutoException;
 import com.samluiz.ordermgmt.common.exceptions.RecursoNaoEncontradoException;
 import com.samluiz.ordermgmt.common.models.StandardError;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -127,6 +131,86 @@ public class ControllerExceptionHandler {
                                                      HttpServletRequest request) {
         String error = "Dados inválidos. Verifique os tipos de cada campo e tente novamente.";
         HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<StandardError> invalidId(MethodArgumentTypeMismatchException e,
+                                                   HttpServletRequest request) {
+        String error = "UUID inválido.";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<StandardError> illegalArgument(IllegalArgumentException e,
+                                                         HttpServletRequest request) {
+        String error = "Dados inválidos.";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<StandardError> invalidBody(HttpMessageNotReadableException e,
+                                                     HttpServletRequest request) {
+        String error = "Corpo da requisição inválido ou mal formatado.";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<StandardError> illegalState(IllegalStateException e,
+                                                      HttpServletRequest request) {
+        String error = "Estado inválido..";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<StandardError> dataIntegrityError(DataIntegrityViolationException e,
+                                                            HttpServletRequest request) {
+        String error = "Erro de integridade de dados.";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err = new StandardError(
                 Instant.now(),
                 status.value(),

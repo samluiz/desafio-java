@@ -1,6 +1,5 @@
 package com.samluiz.ordermgmt.gerenciar.produto.repositories;
 
-import com.samluiz.ordermgmt.gerenciar.produto.enums.Categoria;
 import com.samluiz.ordermgmt.gerenciar.produto.models.Produto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.samluiz.ordermgmt.common.utils.ControllerTestUtils.montarProduto;
+import static com.samluiz.ordermgmt.utils.ControllerTestUtils.montarProduto;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest

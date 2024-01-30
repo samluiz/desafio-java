@@ -1,4 +1,4 @@
-package com.samluiz.ordermgmt.common.config;
+package com.samluiz.ordermgmt.config;
 
 import com.samluiz.ordermgmt.auth.config.SecurityConfig;
 import com.samluiz.ordermgmt.auth.jwt.JwtService;

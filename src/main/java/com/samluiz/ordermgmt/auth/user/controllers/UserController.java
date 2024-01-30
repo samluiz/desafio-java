@@ -6,6 +6,7 @@ import com.samluiz.ordermgmt.auth.user.models.User;
 import com.samluiz.ordermgmt.auth.user.services.UserService;
 import com.samluiz.ordermgmt.common.utils.ControllerUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -24,7 +25,10 @@ public class UserController implements UserSwagger {
 
     @Override
     public ResponseEntity<UserDTO> me(User user) {
-        UserDTO userResponse = UserDTO.fromEntity(userService.findByUsername(user.getUsername()));
+        if (user == null) {
+            throw new AccessDeniedException("Usuário não autenticado.");
+        }
+        UserDTO userResponse = UserDTO.fromEntity(user);
         return ResponseEntity.ok(userResponse);
     }
 

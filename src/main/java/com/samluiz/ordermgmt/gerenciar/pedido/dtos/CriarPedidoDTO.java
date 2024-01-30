@@ -13,4 +13,8 @@ public class CriarPedidoDTO {
     public List<UUID> getProdutos() {
         return produtos;
     }
+
+    public void setProdutos(List<UUID> produtos) {
+        this.produtos = produtos;
+    }
 }

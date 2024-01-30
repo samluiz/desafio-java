@@ -50,6 +50,10 @@ public class PedidoService {
 
     public Pedido create(CriarPedidoDTO dto) {
         try {
+            if (dto.getProdutos() == null || dto.getProdutos().isEmpty()) {
+                logger.info("Nenhum produto informado.");
+                throw new PedidoException("Nenhum produto informado.");
+            }
             Pedido pedido = new Pedido();
             for (UUID produtoId : dto.getProdutos()) {
                 Optional<Produto> produto = produtoRepository.findById(produtoId);

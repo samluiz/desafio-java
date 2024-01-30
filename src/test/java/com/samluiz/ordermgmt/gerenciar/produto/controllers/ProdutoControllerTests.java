@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.Collections;
 import java.util.UUID;
 
-import static com.samluiz.ordermgmt.common.utils.ControllerTestUtils.montarProduto;
+import static com.samluiz.ordermgmt.utils.ControllerTestUtils.montarProduto;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -214,5 +214,33 @@ class ProdutoControllerTests {
                     .andExpect(MockMvcResultMatchers.status().isInternalServerError())
                     .andDo(print());
         } catch (Exception ignored) {}
+    }
+
+    @Test
+    @WithMockUser(username = "user", password = "user", roles = {"VIEWER", "EDITOR"})
+    void delete_InvalidRole_ReturnsForbidden() throws Exception {
+        UUID existingProductId = UUID.randomUUID();
+        doThrow(PermissionDeniedDataAccessException.class).when(produtoService).delete(existingProductId);
+
+        try {
+            mockMvc.perform(MockMvcRequestBuilders.delete("/produtos/{id}", existingProductId)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isForbidden())
+                    .andDo(print());
+        } catch (Exception ignored) {}
+    }
+
+    @Test
+    @WithMockUser(username = "user", password = "user", roles = {"VIEWER"})
+    void create_InvalidRole_ReturnsForbidden() throws Exception {
+        Produto produtoToCreate = montarProduto();
+        Produto createdProduto = montarProduto();
+        when(produtoService.create(any(Produto.class))).thenReturn(createdProduto);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/produtos")
+                        .content(objectMapper.writeValueAsString(produtoToCreate))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isForbidden())
+                .andDo(print());
     }
 }

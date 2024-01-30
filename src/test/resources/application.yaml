@@ -1,5 +1,31 @@
 spring:
+  profiles:
+    active: test
   datasource:
-    url: jdbc:postgresql://localhost:5432/ordermgmt
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  flyway:
+    enabled: false
+  h2:
+    console:
+      enabled: false
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+
+auth:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY:LrzK5x2nWXq0C/vyo0jdEEOo9e8rbC/iLegkVTDanWU=}
+  allowed-origins: ${ALLOWED_ORIGINS:*}
+
+admin:
+  credentials:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:admin}

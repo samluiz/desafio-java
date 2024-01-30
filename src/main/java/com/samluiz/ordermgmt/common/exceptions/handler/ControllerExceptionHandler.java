@@ -1,6 +1,8 @@
 package com.samluiz.ordermgmt.common.exceptions.handler;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.samluiz.ordermgmt.auth.user.exceptions.UsernameEmUsoException;
+import com.samluiz.ordermgmt.auth.user.exceptions.UsernameNaoEncontradoException;
 import com.samluiz.ordermgmt.common.exceptions.PedidoException;
 import com.samluiz.ordermgmt.common.exceptions.ProdutoException;
 import com.samluiz.ordermgmt.common.exceptions.RecursoNaoEncontradoException;
@@ -39,7 +41,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<StandardError> produtoException(ProdutoException e,
                                                           HttpServletRequest request) {
         String error = "Erro ao fazer operação com produto.";
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         StandardError err = new StandardError(
                 Instant.now(),
                 status.value(),
@@ -55,7 +57,39 @@ public class ControllerExceptionHandler {
     public ResponseEntity<StandardError> pedidoException(PedidoException e,
                                                          HttpServletRequest request) {
         String error = "Erro ao fazer operação com pedido.";
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(UsernameEmUsoException.class)
+    public ResponseEntity<StandardError> usernameEmUso(UsernameEmUsoException e,
+                                                       HttpServletRequest request) {
+        String error = "Username já está em uso.";
+        HttpStatus status = HttpStatus.CONFLICT;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(UsernameNaoEncontradoException.class)
+    public ResponseEntity<StandardError> usernameNaoEncontrado(UsernameNaoEncontradoException e,
+                                                               HttpServletRequest request) {
+        String error = "Username não encontrado.";
+        HttpStatus status = HttpStatus.NOT_FOUND;
         StandardError err = new StandardError(
                 Instant.now(),
                 status.value(),

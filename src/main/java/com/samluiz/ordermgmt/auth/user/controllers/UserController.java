@@ -1,5 +1,6 @@
 package com.samluiz.ordermgmt.auth.user.controllers;
 
+import com.samluiz.ordermgmt.auth.user.dtos.CreateUserDTO;
 import com.samluiz.ordermgmt.auth.user.dtos.UserDTO;
 import com.samluiz.ordermgmt.auth.user.models.User;
 import com.samluiz.ordermgmt.auth.user.services.UserService;
@@ -22,6 +23,12 @@ public class UserController implements UserSwagger {
     }
 
     @Override
+    public ResponseEntity<UserDTO> me(User user) {
+        UserDTO userResponse = UserDTO.fromEntity(userService.findByUsername(user.getUsername()));
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @Override
     public ResponseEntity<UserDTO> findById(UUID id) {
         UserDTO userResponse = UserDTO.fromEntity(userService.findById(id));
         return ResponseEntity.ok(userResponse);
@@ -34,7 +41,8 @@ public class UserController implements UserSwagger {
     }
 
     @Override
-    public ResponseEntity<UserDTO> create(User user) {
+    public ResponseEntity<UserDTO> create(CreateUserDTO dto) {
+        User user = CreateUserDTO.toEntity(dto);
         UserDTO userCriado = UserDTO.fromEntity(userService.save(user));
         URI userCriadoUri = controllerUtils.generateURI(userCriado.getId());
         return ResponseEntity.created(userCriadoUri).body(userCriado);

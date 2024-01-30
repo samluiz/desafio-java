@@ -42,7 +42,7 @@ springdoc:
     enabled: true
   swagger-ui:
     path: /docs
-    operationsSorter: alpha
+    operationsSorter: method
     displayRequestDuration: true
     deepLinking: true
     tags-sorter: alpha

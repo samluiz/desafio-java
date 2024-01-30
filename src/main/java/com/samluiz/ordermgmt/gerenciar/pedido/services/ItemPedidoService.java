@@ -3,7 +3,6 @@ package com.samluiz.ordermgmt.gerenciar.pedido.services;
 import com.samluiz.ordermgmt.common.exceptions.PedidoException;
 import com.samluiz.ordermgmt.common.exceptions.RecursoNaoEncontradoException;
 import com.samluiz.ordermgmt.gerenciar.pedido.models.ItemPedido;
-import com.samluiz.ordermgmt.gerenciar.pedido.models.Pedido;
 import com.samluiz.ordermgmt.gerenciar.pedido.repositories.ItemPedidoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

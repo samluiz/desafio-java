@@ -2,7 +2,6 @@ package com.samluiz.ordermgmt.gerenciar.pedido.dtos;
 
 import jakarta.validation.constraints.NotNull;
 
-import java.util.List;
 import java.util.Set;
 
 public class CriarOuAdicionarPedidoDTO {

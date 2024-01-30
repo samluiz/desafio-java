@@ -1,6 +1,5 @@
 package com.samluiz.ordermgmt.gerenciar.produto.services;
 
-import com.samluiz.ordermgmt.common.exceptions.ProdutoException;
 import com.samluiz.ordermgmt.common.exceptions.RecursoNaoEncontradoException;
 import com.samluiz.ordermgmt.gerenciar.produto.models.Produto;
 import com.samluiz.ordermgmt.gerenciar.produto.repositories.ProdutoRepository;

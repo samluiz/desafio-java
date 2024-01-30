@@ -5,7 +5,6 @@ import com.samluiz.ordermgmt.common.exceptions.RecursoNaoEncontradoException;
 import com.samluiz.ordermgmt.gerenciar.pedido.dtos.CriarOuAdicionarPedidoDTO;
 import com.samluiz.ordermgmt.gerenciar.pedido.models.ItemPedido;
 import com.samluiz.ordermgmt.gerenciar.pedido.models.Pedido;
-import com.samluiz.ordermgmt.gerenciar.pedido.repositories.ItemPedidoRepository;
 import com.samluiz.ordermgmt.gerenciar.pedido.repositories.PedidoRepository;
 import com.samluiz.ordermgmt.gerenciar.produto.models.Produto;
 import com.samluiz.ordermgmt.gerenciar.produto.repositories.ProdutoRepository;

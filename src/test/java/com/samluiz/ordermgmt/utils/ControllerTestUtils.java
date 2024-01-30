@@ -7,7 +7,6 @@ import com.samluiz.ordermgmt.gerenciar.pedido.dtos.ItemPedidoDTO;
 import com.samluiz.ordermgmt.gerenciar.produto.enums.Categoria;
 import com.samluiz.ordermgmt.gerenciar.produto.models.Produto;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 

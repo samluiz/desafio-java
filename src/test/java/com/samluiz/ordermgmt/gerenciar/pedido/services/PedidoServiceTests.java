@@ -6,7 +6,6 @@ import com.samluiz.ordermgmt.gerenciar.pedido.dtos.CriarOuAdicionarPedidoDTO;
 import com.samluiz.ordermgmt.gerenciar.pedido.dtos.ItemPedidoDTO;
 import com.samluiz.ordermgmt.gerenciar.pedido.models.ItemPedido;
 import com.samluiz.ordermgmt.gerenciar.pedido.models.Pedido;
-import com.samluiz.ordermgmt.gerenciar.pedido.repositories.ItemPedidoRepository;
 import com.samluiz.ordermgmt.gerenciar.pedido.repositories.PedidoRepository;
 import com.samluiz.ordermgmt.gerenciar.produto.models.Produto;
 import com.samluiz.ordermgmt.gerenciar.produto.repositories.ProdutoRepository;
@@ -19,13 +18,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

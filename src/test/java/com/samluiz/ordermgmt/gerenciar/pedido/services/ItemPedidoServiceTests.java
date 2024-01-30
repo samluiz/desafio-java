@@ -16,7 +16,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.samluiz.ordermgmt.utils.ControllerTestUtils.montarItemPedidoDTO;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

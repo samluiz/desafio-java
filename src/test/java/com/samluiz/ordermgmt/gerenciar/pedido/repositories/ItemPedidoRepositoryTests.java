@@ -1,7 +1,6 @@
 package com.samluiz.ordermgmt.gerenciar.pedido.repositories;
 
 import com.samluiz.ordermgmt.gerenciar.pedido.models.ItemPedido;
-import com.samluiz.ordermgmt.gerenciar.pedido.models.Pedido;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

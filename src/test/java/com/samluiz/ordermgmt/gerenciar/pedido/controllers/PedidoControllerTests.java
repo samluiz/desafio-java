@@ -27,7 +27,8 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static com.samluiz.ordermgmt.utils.ControllerTestUtils.montarCriarPedidoDTO;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

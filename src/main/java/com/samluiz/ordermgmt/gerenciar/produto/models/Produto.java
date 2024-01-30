@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.samluiz.ordermgmt.gerenciar.pedido.models.ItemPedido;
-import com.samluiz.ordermgmt.gerenciar.pedido.models.Pedido;
 import com.samluiz.ordermgmt.gerenciar.produto.enums.Categoria;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
